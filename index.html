@@ -1,13 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Party Planner</title>
-  <script src="index.js" defer></script>
-  <link rel="stylesheet" href="index.js" />
-</head>
-<body>
-  
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Party Planner</title>
+    <script src="index.js" defer></script>
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Party Planner</h1>
+    </header>
+
+    <p>Below is a list of all of the events happening soon! If you want to create a new event, 
+      fill out the form and click "submit". If you want to delete an existing event, click the 
+      "Delete" button next to the associated event. Happy party planning!</p>
+
+    <div id="new-event-form-container">
+      <form id="new-event-form">
+        <label for="name">
+          Name
+          <input type="text" id="name" name="name" placeholder="Name" />
+        </label>
+        <label for="location">
+          Location
+          <input
+            id="location"
+            name="location"
+            placeholder="Location"
+          ></input>
+        </label>
+        <label for="description">
+          Description
+          <textarea
+            id="description"
+            name="description"
+            placeholder="Description"
+            ></textarea>
+        </label>
+        <label>
+          Date
+          <input type="date" name="date" />
+        </label>
+        <label>
+          Time
+          <input type="time" name="time"/>
+        </label>
+        <button type="submit" id="submit">Create</button>
+      </form>
+    </div>
+    <div id="events-container"></div>
+  </body>
 </html>
