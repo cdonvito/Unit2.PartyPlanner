@@ -2,8 +2,9 @@
 const COHORT = "2411-FTB-ET-WEB-PT-cmd";
 
 //API URL
-const API_URL =
-  "https://fsa-crud-2aa9294fe819.herokuapp.com/api/${COHORT}/events";
+const API_URL = `https://fsa-crud-2aa9294fe819.herokuapp.com/api/${COHORT}/events`;
+
+console.log(API_URL);
 
 const state = {
   events: [],
@@ -22,8 +23,11 @@ const fetchAllEvents = async () => {
   }
 };
 
-const createNewEvent = async (name, description, date, location) => {
+const createNewEvent = async (name, description, date, time, location) => {
   try {
+    console.log('12hr time: ' + time);
+    const dateTime = date + "T" + time;
+    console.log('DateTime: ' + dateTime);
     const response = await fetch(API_URL, {
       method: "POST",
       headers: {
@@ -32,7 +36,7 @@ const createNewEvent = async (name, description, date, location) => {
       body: JSON.stringify({
         name,
         description,
-        date: new Date(date).toISOString(),
+        date: new Date(dateTime).toISOString(),
         location,
       }),
     });
@@ -66,10 +70,18 @@ const renderAllEvents = () => {
 
   eventsList.forEach((event) => {
     const eventElement = document.createElement("div");
+    const rawDate = event.date;
+    const dateConv = rawDate.split("T")[0];
+    const timeConv = rawDate.split("T")[1].split(".000Z")[0];
+    console.log('Date: ' + dateConv);
+    console.log('Time: ' + timeConv);
     eventElement.classList.add("event-card");
     eventElement.innerHTML = `
       <h4>${event.name}</h4>
-      <p>${event.description}</h4>
+      <p>${event.description}</p>
+      <p>${event.location}</p>
+      <p>${dateConv}</p>
+      <p>${timeConv}</p>
       <button class="delete-button" data-id="${event.id}">Remove</button>
     `;
 
@@ -81,8 +93,7 @@ const renderAllEvents = () => {
       try {
         event.preventDefault();
         removeEvent(event.id);
-      }
-      catch (error){
+      } catch (error) {
         console.log(error);
       }
     });
@@ -97,22 +108,23 @@ const addListenerToForm = () => {
 
     await createNewEvent(
       form.name.value,
+      form.location.value,
       form.description.textContent,
       form.date.value,
-      form.location.value
+      form.time.value
     );
 
     form.name.value = "";
+    form.location.value = "";
     form.description.textContent = "";
     form.date.value = "";
-    form.location.value = "";
-  })
-}
-
+    form.time.value = "";
+  });
+};
 
 const init = async () => {
   await fetchAllEvents();
   addListenerToForm();
-}
+};
 
 init();
