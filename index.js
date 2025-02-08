@@ -23,21 +23,21 @@ const fetchAllEvents = async () => {
   }
 };
 
-const createNewEvent = async (name, description, date, time, location) => {
+const createNewEvent = async (name, location, description, date, time) => {
   try {
     console.log('12hr time: ' + time);
-    const dateTime = date + "T" + time;
+    const dateTime = `${date}T${time}`;
     console.log('DateTime: ' + dateTime);
-    const response = await fetch(API_URL, {
+    await fetch(API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         name,
+        location,
         description,
         date: new Date(dateTime).toISOString(),
-        location,
       }),
     });
 
@@ -50,8 +50,9 @@ const createNewEvent = async (name, description, date, time, location) => {
 const removeEvent = async (id) => {
   try {
     await fetch(`${API_URL}/${id}`, {
-      method: "Delete",
+      method: "DELETE",
     });
+    fetchAllEvents();
   } catch (error) {
     console.log("Error in removeEvent", error);
   }
@@ -70,19 +71,21 @@ const renderAllEvents = () => {
 
   eventsList.forEach((event) => {
     const eventElement = document.createElement("div");
-    const rawDate = event.date;
-    const dateConv = rawDate.split("T")[0];
-    const timeConv = rawDate.split("T")[1].split(".000Z")[0];
+    const rawDate = new Date(event.date);
+  
+    const dateConv = rawDate.toISOString().split("T")[0];
+    const timeConv = rawDate.toLocaleTimeString();
+
     console.log('Date: ' + dateConv);
     console.log('Time: ' + timeConv);
     eventElement.classList.add("event-card");
     eventElement.innerHTML = `
-      <h4>${event.name}</h4>
-      <p>${event.description}</p>
-      <p>${event.location}</p>
-      <p>${dateConv}</p>
-      <p>${timeConv}</p>
-      <button class="delete-button" data-id="${event.id}">Remove</button>
+      <h4>Event Name: ${event.name}</h4>
+      <p>Event Description: ${event.description}</p>
+      <p>Event Location: ${event.location}</p>
+      <p>Date: ${dateConv}</p>
+      <p>Time (Local): ${timeConv}</p>
+      <button class="delete-button" data-id="${event.id}">Delete</button>
     `;
 
     eventsContainer.appendChild(eventElement);
@@ -92,9 +95,9 @@ const renderAllEvents = () => {
     deleteButton.addEventListener("click", (event) => {
       try {
         event.preventDefault();
-        removeEvent(event.id);
+        removeEvent(event.target.dataset.id);
       } catch (error) {
-        console.log(error);
+        console.log("Error in removeEvent", error);
       }
     });
   });
@@ -109,14 +112,14 @@ const addListenerToForm = () => {
     await createNewEvent(
       form.name.value,
       form.location.value,
-      form.description.textContent,
+      form.description.value,
       form.date.value,
       form.time.value
     );
 
     form.name.value = "";
     form.location.value = "";
-    form.description.textContent = "";
+    form.description.value = "";
     form.date.value = "";
     form.time.value = "";
   });
