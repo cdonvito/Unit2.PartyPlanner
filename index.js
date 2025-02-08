@@ -4,12 +4,13 @@ const COHORT = "2411-FTB-ET-WEB-PT-cmd";
 //API URL
 const API_URL = `https://fsa-crud-2aa9294fe819.herokuapp.com/api/${COHORT}/events`;
 
-console.log(API_URL);
+//console.log(API_URL);
 
 const state = {
   events: [],
 };
 
+//GET Request to pull data
 const fetchAllEvents = async () => {
   try {
     const response = await fetch(API_URL);
@@ -23,11 +24,12 @@ const fetchAllEvents = async () => {
   }
 };
 
+//POST Request to write new data
 const createNewEvent = async (name, location, description, date, time) => {
   try {
-    console.log('12hr time: ' + time);
     const dateTime = `${date}T${time}`;
-    console.log('DateTime: ' + dateTime);
+    //console.log('12hr time: ' + time);
+    //console.log('DateTime: ' + dateTime);
     await fetch(API_URL, {
       method: "POST",
       headers: {
@@ -47,6 +49,7 @@ const createNewEvent = async (name, location, description, date, time) => {
   }
 };
 
+//DELETE Request to remove an event and its set of data
 const removeEvent = async (id) => {
   try {
     await fetch(`${API_URL}/${id}`, {
@@ -58,6 +61,7 @@ const removeEvent = async (id) => {
   }
 };
 
+//Render Events based on database
 const renderAllEvents = () => {
   const eventsContainer = document.getElementById("events-container");
   const eventsList = state.events;
@@ -69,15 +73,16 @@ const renderAllEvents = () => {
 
   eventsContainer.innerHTML = "";
 
+  //Make event cards based on current data in database
   eventsList.forEach((event) => {
     const eventElement = document.createElement("div");
     const rawDate = new Date(event.date);
-  
+
     const dateConv = rawDate.toISOString().split("T")[0];
     const timeConv = rawDate.toLocaleTimeString();
 
-    console.log('Date: ' + dateConv);
-    console.log('Time: ' + timeConv);
+    //console.log('Date: ' + dateConv);
+    //console.log('Time: ' + timeConv);
     eventElement.classList.add("event-card");
     eventElement.innerHTML = `
       <h4>Event Name: ${event.name}</h4>
@@ -91,7 +96,6 @@ const renderAllEvents = () => {
     eventsContainer.appendChild(eventElement);
 
     const deleteButton = eventElement.querySelector(".delete-button");
-
     deleteButton.addEventListener("click", (event) => {
       try {
         event.preventDefault();
@@ -103,6 +107,8 @@ const renderAllEvents = () => {
   });
 };
 
+//Add Event Listener to form on click of submit button
+//Pulls data in form and calls createNewEvent, then clears out the form values
 const addListenerToForm = () => {
   const form = document.querySelector("#new-event-form");
 
